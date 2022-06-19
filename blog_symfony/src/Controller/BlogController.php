@@ -40,7 +40,7 @@ class BlogController extends AbstractController
         $form = $this->createForm(ArticleType::class);
 
         return $this->renderForm('blog/create.html.twig', [
-            'form' => $form
+            'formArticle' => $form
         ]);
     }
 
