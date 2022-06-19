@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,9 +36,24 @@ class BlogController extends AbstractController
         /**
      * @Route("/blog/new", name="blog_create")
      */
-    public function create(Request $request): Response
+    public function create(Request $request, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(ArticleType::class);
+        $article = new Article();
+        
+
+        $form = $this->createForm(ArticleType::class, $article);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            // $form->getData() holds the submitted values
+            // but, the original `$task` variable has also been updated
+            $article = $form->getData();
+            $article->setCreatedAt(new \DateTimeImmutable());
+            $entityManager->persist($article);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('blog');
+        }
 
         return $this->renderForm('blog/create.html.twig', [
             'formArticle' => $form
