@@ -3,7 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Form\ArticleType;
 use App\Repository\ArticleRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class BlogController extends AbstractController
 {
     /**
-     * @Route("/blog", name="app_blog")
+     * @Route("/blog", name="blog")
      */
     public function index(ArticleRepository $repo): Response
     {
@@ -30,6 +32,18 @@ class BlogController extends AbstractController
         return $this->render('blog/home.html.twig');
     }
     
+        /**
+     * @Route("/blog/new", name="blog_create")
+     */
+    public function create(Request $request): Response
+    {
+        $form = $this->createForm(ArticleType::class);
+
+        return $this->renderForm('blog/create.html.twig', [
+            'form' => $form
+        ]);
+    }
+
     /**
      * @Route("/blog/{id}", name="blog_show")
      */
@@ -40,4 +54,5 @@ class BlogController extends AbstractController
             'article' => $article
         ]);
     }
+
 }
